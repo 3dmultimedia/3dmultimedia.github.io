@@ -1,0 +1,17 @@
+html,body{
+	
+    background: #E8F0F2 url(images/fon.jpg);
+	width:1000px;
+	height:100%;
+    margin-left: auto;
+	margin-right: auto;
+		
+	//overflow: hidden;
+}
+ .flexible-image {
+	max-width: 100%;
+}
+
+  .
+
+
