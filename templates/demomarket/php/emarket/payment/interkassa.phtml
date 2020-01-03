@@ -1,0 +1,108 @@
+<?php
+/**
+* Interkassa payment form .phtml
+* @author marat.ua
+* @package UMI CMS version 18
+* @version 1.0
+*/
+//$data = $variables['purchasing'];
+$path = "/templates/demomarket/img/interkassa/";
+$httpScheme = 'http://';
+if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) {
+	$httpScheme = 'https://';
+}
+$collection = domainsCollection::getInstance();
+$domain = $collection->getDefaultDomain();
+$host = $httpScheme.$domain->getHost();
+?>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<link href="/templates/demomarket/css/umi_interkassa.css" rel="stylesheet" type="text/css" />
+<form action="https://sci.interkassa.com/" method="post" id="umi-ik-checkout">
+	<input type="hidden" name="ik_co_id" value="<?= $variables['purchase']['purchasing']['ik_co_id'] ?>" />
+	<input type="hidden" name="ik_am" value="<?= $variables['purchase']['purchasing']['ik_am'] ?>" />
+	<input type="hidden" name="ik_pm_no" value="<?= $variables['purchase']['purchasing']['ik_pm_no'] ?>" />
+	<input type="hidden" name="ik_cur" value="<?= $variables['purchase']['purchasing']['ik_cur'] ?>" />
+	<input type="hidden" name="ik_desc" value="<?= $variables['purchase']['purchasing']['ik_desc'] ?>" />
+    <input type="hidden" name="ik_suc_u" value="<?= $variables['purchase']['purchasing']['ik_suc_u'] ?>" />
+    <input type="hidden" name="ik_fal_u" value="<?= $variables['purchase']['purchasing']['ik_fal_u'] ?>" />
+    <input type="hidden" name="ik_pnd_u" value="<?= $variables['purchase']['purchasing']['ik_pnd_u'] ?>" />
+	<input type="hidden" name="ik_ia_u" value="<?= $variables['purchase']['purchasing']['ik_ia_u'] ?>" />
+	<?php if (isset($variables['purchase']['purchasing']['ik_pw_via']) && $variables['purchase']['purchasing']['ik_pw_via'] == 'test_interkassa_test_xts') { ?>
+		<input type="hidden" name="ik_pw_via" value="<?= $variables['purchase']['purchasing']['ik_pw_via'] ?>" />
+	<?php } ?>
+	<?php if (is_array($variables['purchase']['purchasing']['payments_systems']) && !empty($variables['purchase']['purchasing']['payments_systems'])) { ?>
+		<input type="hidden" name="payment_metod" value="" />
+		<input type="hidden" name="paymentId" value="<?= $variables['purchase']['purchasing']['paymentId'] ?>" />
+	<?php } ?>
+	<input type="hidden" name="ik_sign" value="<?= $variables['purchase']['purchasing']['ik_sign'] ?>" />
+	<div>
+		<img src="/images/payment/ik_logo.gif" align="left" alt="<?= $this->translate('Интеркасса') ?>" width="210px"/>
+	</div>
+
+	<div class="clearfix"></div>
+	<?php if (empty($variables['purchase']['purchasing']['payments_systems'])) { ?>
+		<div>
+			<input type="submit" value="<?= $this->translate('pay') ?>" class="button big"/>
+		</div>
+	<?php } ?>
+
+</form>
+
+<?php	if (is_array($variables['purchase']['purchasing']['payments_systems']) && !empty($variables['purchase']['purchasing']['payments_systems'])) { ?>
+	<div>
+		<button  id="InterkassaModalButton" class="sel-ps-ik btn btn-info btn-lg" data-toggle="modal" data-target="#InterkassaModal"><?= $this->translate('Выберите метод оплаты') ?></button>
+	</div>
+<div class="interkasssa" style="text-align: center;">
+	<div id="InterkassaModal" class="modal fade" role="dialog" data-link="<?=$host."/emarket/sendSign/"?>">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content" id="plans">
+				<div class="container">
+					<h3>
+						1. <?= $this->translate('Выберите удобный способ оплаты'); ?><br>
+						2. <?= $this->translate('Укажите валюту'); ?><br>
+						3. <?= $this->translate('Нажмите &laquo;Оплатить&raquo;'); ?><br>
+					</h3>
+					<div class="row">
+						<?php foreach ($variables['purchase']['purchasing']['payments_systems'] as $ps => $info) { ?>
+							<div class="col-sm-3 text-center payment_system">
+								<div class="panel panel-warning panel-pricing">
+									<div class="panel-heading">
+										<div class="panel-image">
+											<img src="<?php echo $path . $ps; ?>.png"
+												 alt="<?php echo $info['title']; ?>">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="input-group">
+											<div class="radioBtn btn-group">
+												<?php foreach ($info['currency'] as $currency => $currencyAlias) { ?>
+													<a class="btn btn-primary btn-sm notActive" href='javascript:void(0);'
+													   data-toggle="fun"
+													   data-payment ="<?= $ps;?>"
+													   data-title="<?= $currencyAlias; ?>"><?= $currency; ?></a>
+												<?php } ?>
+											</div>
+										</div>
+									</div>
+									<div class="panel-footer">
+										<a class="btn btn-lg btn-block btn-success ik-payment-confirmation"
+										   data-payment="<?= $ps; ?>"
+										   href="javascript:void(0);"><?=$this->translate('Оплатить через') ?><br>
+											<strong><?= $info['title']; ?></strong>
+										</a>
+									</div>
+								</div>
+							</div>
+						<?php } ?>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="/templates/demomarket/js/interkassa_modal.js"></script>
+<?php } ?>
