@@ -2,8 +2,8 @@
 $(document).ready(function(){
 	
 	$("#exterior").vc3dEye({
-		imagePath:"images/modern/",
-		totalImages: 120,
+		imagePath:"images/",
+		totalImages: 68,
 		imageExtension:"jpg"
 	});
 	
